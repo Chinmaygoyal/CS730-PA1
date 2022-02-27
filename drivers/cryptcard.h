@@ -3,6 +3,11 @@
 
 #define DEVNAME "cryptcard"
 #define CHAR_DEVNAME "crypt_chardev"
+#define DATA_ADDRESS 0xa8
+#define PAGE_SIZE 4096
+#define KB 1024
+#define MB 1024*1024
+
 #define CRYPT_A 0xa
 #define CRYPT_B 0xb
 #define MMIO_LENGTH 0xc
@@ -16,8 +21,6 @@
 #define DMA_ADDRESS 0x90
 #define DMA_STATUS 0xa0
 
-#define KB 1024
-#define MB 1024*1024
 #define DECRYPT_BIT 1
 #define MMIO_INTERRUPT 7
 #define DMA_INTERRUPT 2
@@ -28,6 +31,8 @@
 
 
 void set_a_b(uint8_t a, uint8_t b);
+
+extern struct attribute_group memtrack_attr_group;
 
 
 /*
@@ -44,6 +49,7 @@ struct crypt_data{
     uint8_t b;
     int interrupt;
     int mmio;
+    int ismapped;
 };
 
 struct file_pvt{

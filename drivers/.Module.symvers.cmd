@@ -1,1 +1,0 @@
-cmd_/home/chinmay/Downloads/Assignment-1/CS730-PA-library-master/drivers/Module.symvers := sed 's/\.ko$$/\.o/' /home/chinmay/Downloads/Assignment-1/CS730-PA-library-master/drivers/modules.order | scripts/mod/modpost -m -a  -o /home/chinmay/Downloads/Assignment-1/CS730-PA-library-master/drivers/Module.symvers -e -i Module.symvers   -T -

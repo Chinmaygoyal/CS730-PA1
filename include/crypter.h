@@ -46,6 +46,7 @@ struct crypt_data{
     uint8_t b;
     int interrupt;
     int mmio;
+    int ismapped;
 };
 
 struct file_pvt{

@@ -30,6 +30,9 @@ test1: $(OBJ)/test1.o $(LIB)/libcrypter.so
 test2: $(OBJ)/test2.o $(LIB)/libcrypter.so
 	$(CC) -o $@ -I$(INC) $< -L$(LIB) -lcrypter
 
+test3: $(OBJ)/test3.o $(LIB)/libcrypter.so
+	$(CC) -o $@ -I$(INC) $< -L$(LIB) -lcrypter
+
 dma: $(BENCH_OBJ)/dma.o $(LIB)/libcrypter.so
 	$(CC) -o $@ -I$(INC) $< -L$(LIB) -lcrypter
 
@@ -73,4 +76,4 @@ prepare-submit: $(RNO)-pa-cs730.tar.gz
 
 .PHONY: clean
 clean:
-	rm -rf test1 create-dev dma dma_interrupt mmap mmap_interrupt mmio mmio_interrupt $(OBJ) $(LIB) $(BENCH_OBJ)
+	rm -rf test1 test2 test3 create-dev dma dma_interrupt mmap mmap_interrupt mmio mmio_interrupt $(OBJ) $(LIB) $(BENCH_OBJ)

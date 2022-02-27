@@ -13,12 +13,12 @@ struct crypt_data initializa_crypt(){
     cd.b = 0;
     cd.interrupt = 0;
     cd.mmio = 1;
+    cd.ismapped = 0;
     return cd;
 }
 
 DEV_HANDLE create_handle(){
     int fd = open("/dev/crypt_chardev",O_RDWR);
-    printf("The file is open with fd:%d\n",fd);
     return fd;
 }
 
@@ -42,6 +42,7 @@ int encrypt(DEV_HANDLE cdev, ADDR_PTR addr, uint64_t length, uint8_t isMapped){
     data.address = addr;
     data.operation = 1;
     data.length = length;
+    data.ismapped = isMapped;
     int err = write(fd,(void*)&data,sizeof(struct crypt_data));
     return err;
 }
@@ -59,6 +60,7 @@ int decrypt(DEV_HANDLE cdev, ADDR_PTR addr, uint64_t length, uint8_t isMapped){
     data.address = addr;
     data.operation = 2;
     data.length = length;
+    data.ismapped = isMapped;
     int err = write(fd,(void*)&data,sizeof(struct crypt_data));
     return err;
 }
@@ -112,7 +114,8 @@ Return virtual address of the mapped memory*/
 ADDR_PTR map_card(DEV_HANDLE cdev, uint64_t size)
 {
     if(size >= 1024*1024) return NULL;
-    return mmap(NULL, size, PROT_EXEC | PROT_READ | PROT_WRITE, MAP_PRIVATE, cdev, 0);
+    void* ret_val = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_POPULATE, cdev,0);
+    return ret_val;
 }
 
 /*Function template to device input/output memory into user space.
@@ -121,5 +124,5 @@ Takes three arguments
   addr: memory-mapped address to unmap from user-space*/
 void unmap_card(DEV_HANDLE cdev, ADDR_PTR addr)
 {
-  
+  return;
 }
