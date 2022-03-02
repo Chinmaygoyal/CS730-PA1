@@ -6,11 +6,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
 #ifndef CRYPTER_H_
 #define CRYPTER_H_
 
-#define ADDR_PTR void*
+#define ADDR_PTR void *
 #define DEV_HANDLE int
 #define SET 1
 #define UNSET 0
@@ -18,9 +17,12 @@
 #define FALSE 0
 #define ERROR -1
 #define KEY_COMP uint8_t
-#define MB 1024*1024
 
-typedef enum {INTERRUPT, DMA} config_t;
+typedef enum
+{
+    INTERRUPT,
+    DMA
+} config_t;
 
 DEV_HANDLE create_handle();
 
@@ -37,24 +39,5 @@ int set_config(DEV_HANDLE cdev, config_t type, uint8_t value);
 ADDR_PTR map_card(DEV_HANDLE cdev, uint64_t size);
 
 void unmap_card(DEV_HANDLE cdev, ADDR_PTR addr);
-
-
-struct crypt_data{
-    void* address;
-    uint64_t length;
-    uint32_t operation;
-    uint8_t a;
-    uint8_t b;
-    int interrupt;
-    int mmio;
-    int ismapped;
-};
-
-struct file_pvt{
-    uint8_t a;
-    uint8_t b;
-    int interrupt;
-    int mmio;
-};
 
 #endif

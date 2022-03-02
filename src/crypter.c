@@ -4,6 +4,26 @@
 /*Function template to create handle for the CryptoCard device.
 On success it returns the device handle as an integer*/
 
+struct crypt_data{
+    void* address;
+    uint64_t length;
+    uint32_t operation;
+    uint8_t a;
+    uint8_t b;
+    int interrupt;
+    int mmio;
+    int ismapped;
+};
+
+struct file_pvt{
+    uint8_t a;
+    uint8_t b;
+    int interrupt;
+    int mmio;
+};
+
+#define MB 1024*1024
+
 struct crypt_data initializa_crypt(){
     struct crypt_data cd;
     cd.address = NULL;
