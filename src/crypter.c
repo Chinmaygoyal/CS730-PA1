@@ -113,9 +113,12 @@ Takes three arguments
 Return virtual address of the mapped memory*/
 ADDR_PTR map_card(DEV_HANDLE cdev, uint64_t size)
 {
-    if(size >= 1024*1024) return NULL;
-    void* ret_val = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_POPULATE, cdev,0);
-    return ret_val;
+    if(size > 1024*1024) return NULL;
+    size = size + 0xa8;
+    if(size < 1*MB) size = 1*MB;
+    unsigned long ret_val = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, cdev,0);
+    ret_val += 0xa8;
+    return (void*)ret_val;
 }
 
 /*Function template to device input/output memory into user space.
@@ -124,5 +127,6 @@ Takes three arguments
   addr: memory-mapped address to unmap from user-space*/
 void unmap_card(DEV_HANDLE cdev, ADDR_PTR addr)
 {
+  munmap(addr - 0xa8, 1*MB);
   return;
 }

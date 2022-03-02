@@ -122,11 +122,12 @@
 
 ## Benchmarking Result
 - Benchmark results have been added in the folder `bechmark-results`
+- The benchmarking was done with file size of 10MB
 
-  | coomand        | %usr | %system | %wait | %CPU  |
+  | command        | %usr | %system | %wait | %CPU  |
   |----------------|------|---------|-------|-------|
-  | MMAP           | 0.06 | 78.03   | 0.03  | 78.09 |
-  | MMAP_Interrupt | 0    | 91.81   | 0.35  | 91.81 |
+  | MMAP           | 46.75| 4.75    | 0.42  | 51.50 |
+  | MMAP_Interrupt | 75.17| 6       | 0.17  | 81.17 |
   | MMIO           | 0.06 | 81.97   | 0     | 82.93 |
   | MMIO_Interrupt | 0.04 | 94.65   | 0.42  | 94.69 |
   | DMA            | 0.01 | 6.7     | 0.24  | 6.71  |

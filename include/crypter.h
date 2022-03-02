@@ -18,6 +18,7 @@
 #define FALSE 0
 #define ERROR -1
 #define KEY_COMP uint8_t
+#define MB 1024*1024
 
 typedef enum {INTERRUPT, DMA} config_t;
 

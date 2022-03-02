@@ -80,11 +80,6 @@ void __encrypt(u64 address, uint64_t length, struct file_pvt *pvt_data, int decr
             iowrite32(0 | (decrypt << DECRYPT_BIT) | (interrupt << MMIO_INTERRUPT),hwmem+MMIO_STATUS);
             iowrite64(MMIO_DATA,hwmem+MMIO_ADDRESS);
         }else{
-            // destination_addr = (void*)((u64)destination_addr + PAGE_SIZE);
-            // printk("Mapped region operation\n");
-            // printk("The string from kernel version in user address space is %s\n",address);
-            // printk("The string from kernel version is %s\n",hwmem + MMIO_DATA);
-            memcpy(destination_addr ,address,length);
             iowrite32((u32)length,hwmem+MMIO_LENGTH);
             iowrite32(0 | (decrypt << DECRYPT_BIT) | (interrupt << MMIO_INTERRUPT),hwmem+MMIO_STATUS);
             iowrite64(MMIO_DATA,hwmem+MMIO_ADDRESS);
@@ -128,7 +123,7 @@ void __encrypt(u64 address, uint64_t length, struct file_pvt *pvt_data, int decr
         }
     }
     if(mmio && ismapped){
-        memcpy(address,destination_addr,length);
+        // memcpy(address,destination_addr,length);
     }else
         memcpy(address,destination_addr,length);
     return;
@@ -158,7 +153,6 @@ static int demo_open(struct inode *inode, struct file *file)
         }
         file->private_data = private_data_init();
         printk(KERN_INFO "Device opened successfully\n");
-        printk("This is open");
         return 0;
 }
 
@@ -183,7 +177,7 @@ static ssize_t demo_write(struct file *filp, const char *buff, size_t len, loff_
 {
 
         spin_lock(&sp_lock);
-        // printk(KERN_INFO "In write\n");
+        printk(KERN_INFO "In write\n");
         struct crypt_data data;
         if(copy_from_user(&data,buff,len) != 0)
             return -1;
@@ -240,26 +234,9 @@ static struct vm_operations_struct simple_remap_vm_ops = {
 };
 
 static int demo_mmap(struct file *filp, struct vm_area_struct * vma){
-        vma->vm_ops = &simple_remap_vm_ops;
-        unsigned long len = vma->vm_end - vma->vm_start;
-
-        int ret;
-        unsigned long pfn2 = ((u64)mmio_start + PAGE_SIZE)>>PAGE_SHIFT;
-        ret = remap_pfn_range(vma, vma->vm_start, pfn2, len, vma->vm_page_prot);
-        if (ret < 0) {
-            pr_err("could not map the address area\n");
-            return -EIO;
-        }else{
-            printk("Mapping successful\n");
-        }
-        // int npages =  (len +  (PAGE_SIZE - (len%PAGE_SIZE))%PAGE_SIZE)/PAGE_SIZE;
-        // printk("Number of pages: %d\n",npages);
-        // for(i = 0; i < npages; i++)
-        //     SetPageReserved(pfn_to_page(pfn2+i));
-
+        io_remap_pfn_range(vma, vma->vm_start, pci_resource_start(p_dev, 0) >> PAGE_SHIFT, vma->vm_end - vma->vm_start,vma->vm_page_prot);
         return 0;
 }
-
 
 static struct file_operations fops = {
         .read = demo_read,
@@ -331,9 +308,8 @@ int init_char_dev(void)
     }
 
 
-    printk(KERN_INFO "I was assigned major number %d. To talk to\n", major);
+    // printk(KERN_INFO "I was assigned major number %d. To talk to\n", major);
     atomic_set(&device_opened, 0);
-    
 
 	return 0;
 
@@ -364,17 +340,6 @@ void cleanup_char_dev(void)
     printk(KERN_INFO "Goodbye kernel\n");
 }
 
-// #define DEVNAME "cryptcard"
-// #define CRYPT_A 0x10
-// #define CRYPT_B 0x11
-// Interrupt stored in PCI_INTERRUPT_LINE -> 1 byte
-
-/* We need to register an interrupt which is 11 over here and assign a handler to the intrerrupt,
-    After that we have to free the interrupt at the time of remove.
-*/
-
-// return IRQ_HANDLED after handling the interrupt
-
 static irqreturn_t irq_handler(int irq, void *cookie)
 {
     u32 value = ioread32(hwmem + 0x24);
@@ -387,26 +352,22 @@ static irqreturn_t irq_handler(int irq, void *cookie)
 
 int set_interrupts(struct pci_dev *dev)
 {
-    printk("Setting the interrupts\n");
-    
     return request_irq(dev->irq, irq_handler, 0, "Cryptcard IRQ", dev);
 }
 
 
 int crypt_probe(struct pci_dev *dev, const struct pci_device_id *id){
-    printk(KERN_INFO "Hi!! This is the cryptcard driver. New device inserted\n");
+    // printk(KERN_INFO "Hi!! This is the cryptcard driver. New device inserted\n");
     
     pci_enable_device(dev);
-    printk("The pin being used by the device is %d\n",dev->irq);
     // pci_request_region(dev, 0, DEVNAME);
     mmio_start = pci_resource_start(dev, 0);
     mmio_len = pci_resource_len(dev, 0);
     // struct resource *res = request_mem_region((long)mmio_start, (long)mmio_len, "Crypt Mem");
     hwmem = ioremap(mmio_start, mmio_len);
-    printk("Start of memory location: %llx, Length is: %lx\n",mmio_start,mmio_len);
-    printk("The value of hwmwm is %x\n",hwmem);
-    u32 value = ioread32(hwmem + 0x24);
-    printk("The value read from ISR:%d\n",value);
+    // printk("Start of memory location: %llx, Length is: %lx\n",mmio_start,mmio_len);
+    // printk("The value of hwmwm is %x\n",hwmem);
+    // u32 value = ioread32(hwmem + 0x24);
     set_interrupts(dev);
     p_dev = dev;
     kernel_add = dma_alloc_coherent(&(p_dev->dev), 32*KB, &dma_handle, GFP_ATOMIC);
@@ -417,7 +378,7 @@ void crypt_remove(struct pci_dev *dev){
     free_irq (dev->irq, dev);
     dma_free_coherent(&(p_dev->dev), 32*KB, kernel_add, dma_handle);
     // pci_release_selected_regions(dev,0);
-    printk(KERN_INFO "Hi!! This is the cryptcard driver. New device removed\n");
+    // printk(KERN_INFO "Hi!! This is the cryptcard driver. New device removed\n");
     return;
 }
 
@@ -436,11 +397,6 @@ static struct pci_driver crypt_driver = {
     .remove = crypt_remove,
     .id_table = driver_id_table
 };
-
-// int (*probe)(struct pci_dev *dev, const struct pci_device_id *id); /* New device inserted */
-// void (*remove)(struct pci_dev *dev); /* Device removed (NULL if not a hot-plug capable driver) */
-// int (*suspend)(struct pci_dev *dev, pm_message_t state); /* Device suspended */
-// int (*resume)(struct pci_dev *dev); /* Device woken up */
 
 int init_module(void){
     printk("Loading the pci driver module\n");
