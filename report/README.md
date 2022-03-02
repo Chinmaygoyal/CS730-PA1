@@ -2,6 +2,18 @@
 
 ## Design
 - The Cryptcard device was recognised using the product id and the vendor id
+- For multiprocess implementation of cryptocard, a spinning lock was taken in the kernel space which allows only 1 process to access the device at a time.
+- Processes like set_config and set_key cannot be allowed to be accesses by multiple processes because the configuration is stored in the private field of the file pointer which is shared by the child and parent processes.
+- A sysfs variable has been created in the `/sys/kernel/cryptcard/` folder with the name command.
+- The sysfs variable is write only and can be used to set the default global configuration
+  - The structure of the variable is as follows:
+      - a - first 8 bits
+      - b - next 8 bits
+      - interrupt value - next bit
+      - mmio - next bit
+  - In total 18 bits can be used in the command file.
+
+## Implementation
 
 ### Crypter.C
 
@@ -107,6 +119,22 @@
 #### crypt_remove
 - Function called when the device being pointed to by the device is disconnected from the driver
 - Insipration taken from [Oleg Kutkov Blog](https://olegkutkov.me/2021/01/07/writing-a-pci-device-driver-for-linux/)
+
+## Benchmarking Result
+- Benchmark results have been added in the folder `bechmark-results`
+
+  | coomand        | %usr | %system | %wait | %CPU  |
+  |----------------|------|---------|-------|-------|
+  | MMAP           | 0.06 | 78.03   | 0.03  | 78.09 |
+  | MMAP_Interrupt | 0    | 91.81   | 0.35  | 91.81 |
+  | MMIO           | 0.06 | 81.97   | 0     | 82.93 |
+  | MMIO_Interrupt | 0.04 | 94.65   | 0.42  | 94.69 |
+  | DMA            | 0.01 | 6.7     | 0.24  | 6.71  |
+  | DMA_Interrupt  | 0.01 | 0.21    | 0     | 0.22  |
+
+## Testing
+- Testing was done through the eval-tests given.
+- Some intensive testing was done by modifying the benchmark programs to check for correctness as well.
 
 ## Acknowledgements
 - The code for the pci driver was inspired a lot from [Oleg Kutkov Blog](https://olegkutkov.me/2021/01/07/writing-a-pci-device-driver-for-linux/)

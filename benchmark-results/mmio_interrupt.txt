@@ -1,13 +1,18 @@
-Linux 5.13.0-30-generic (chinmay-Standard-PC-Q35-ICH9-2009) 	27/02/22 	_x86_64_	(4 CPU)
+Linux 5.13.0-30-generic (chinmay-Standard-PC-Q35-ICH9-2009) 	02/03/22 	_x86_64_	(4 CPU)
 
-06:36:59 PM IST     CPU     %user     %nice   %system   %iowait    %steal     %idle
-06:37:04 PM IST     all      0.75      0.00      0.60      0.15      0.00     98.50
-06:37:09 PM IST     all      0.81      0.00     21.23      0.45      0.10     77.41
-06:37:14 PM IST     all      0.66      0.00     26.01      3.63      0.00     69.70
-06:37:19 PM IST     all      0.86      0.00     25.18      1.27      0.00     72.70
-06:37:24 PM IST     all      0.56      0.00     24.58      0.10      0.10     74.66
-06:37:29 PM IST     all      0.76      0.00     25.00      0.20      0.05     73.99
-06:37:34 PM IST     all      0.35      0.00     17.04      0.40      0.00     82.20
-06:37:39 PM IST     all      0.15      0.00      1.26      3.47      0.00     95.12
+02:22:47 PM IST   UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+02:22:49 PM IST  1000      7573    0.00   94.50    0.00    0.00   94.50     0  mmio_interrupt
+02:22:51 PM IST  1000      7573    0.00   95.00    0.00    0.50   95.00     0  mmio_interrupt
+02:22:53 PM IST  1000      7573    0.00   95.00    0.00    0.50   95.00     0  mmio_interrupt
+02:22:55 PM IST  1000      7573    0.00   94.00    0.00    0.00   94.00     0  mmio_interrupt
+02:22:57 PM IST  1000      7573    0.00   95.00    0.00    0.50   95.00     0  mmio_interrupt
+02:22:59 PM IST  1000      7573    0.00   95.00    0.00    0.00   95.00     0  mmio_interrupt
+02:23:01 PM IST  1000      7573    0.00   95.00    0.00    0.50   95.00     0  mmio_interrupt
+02:23:03 PM IST  1000      7573    0.00   94.50    0.00    0.50   94.50     0  mmio_interrupt
+02:23:05 PM IST  1000      7573    0.00   94.50    0.00    1.00   94.50     0  mmio_interrupt
+02:23:07 PM IST  1000      7573    0.00   94.50    0.00    0.00   94.50     0  mmio_interrupt
+02:23:09 PM IST  1000      7573    0.00   95.00    0.00    1.00   95.00     0  mmio_interrupt
+02:23:11 PM IST  1000      7573    0.50   94.50    0.00    0.50   95.00     0  mmio_interrupt
+02:23:13 PM IST  1000      7573    0.00   94.00    0.00    0.50   94.00     0  mmio_interrupt
 
-Average:        all      0.61      0.00     17.56      1.21      0.03     80.58
+Average:     1000      7573    0.04   94.65    0.00    0.42   94.69     -  mmio_interrupt
